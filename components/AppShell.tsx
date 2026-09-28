@@ -1,8 +1,8 @@
 "use client";
 import { usePathname,useRouter } from "next/navigation";
-import { BookOpen,CalendarDays,LayoutDashboard,LogOut,Settings,Users,Video } from "lucide-react";
+import { BookOpen,CalendarDays,ClipboardList,FolderOpen,LayoutDashboard,LogOut,Settings,Users,Video } from "lucide-react";
 import Brand from "./Brand";
-const items=[["/dashboard","Home",LayoutDashboard],["/classes","Classes",BookOpen],["/join","Join class",Users],["/classroom","Live room",Video],["/schedule","Schedule",CalendarDays],["/settings","Settings",Settings]] as const;
+const items=[["/dashboard","Home",LayoutDashboard],["/classes","Classes",BookOpen],["/students","Students",Users],["/assignments","Assignments",ClipboardList],["/schedule","Schedule",CalendarDays],["/recordings","Recordings",Video],["/resources","Resources",FolderOpen],["/settings","Settings",Settings]] as const;
 export default function AppShell({children}:{children:React.ReactNode}){
  const path=usePathname(),router=useRouter();
  async function logout(){await fetch("/api/auth/logout",{method:"POST"});router.push("/login");router.refresh()}
