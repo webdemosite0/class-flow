@@ -1,0 +1,11 @@
+"use client";
+import { useEffect,useState } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowRight,Check,GraduationCap,Sparkles,Users } from "lucide-react";
+import Brand from "@/components/Brand";
+export default function Onboarding(){
+ const router=useRouter();const [name,setName]=useState("");const [role,setRole]=useState<"teacher"|"student">("teacher");const [size,setSize]=useState(5);const [busy,setBusy]=useState(false);
+ useEffect(()=>{fetch("/api/auth/me").then(r=>r.json()).then(d=>{if(!d.user)return router.push("/login");setName(d.user.name||"");setRole(d.user.role||"teacher")})},[router]);
+ async function finish(){setBusy(true);const r=await fetch("/api/onboarding",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,role,defaultClassSize:size})});setBusy(false);if(r.ok)router.push(role==="teacher"?"/dashboard":"/join")}
+ return <div className="cf-onboard"><header><Brand/><span>Setup</span></header><main><div className="cf-onboard-copy"><span className="cf-overline"><Sparkles size={14}/> PERSONALIZE CLASSFLOW</span><h1>Make the classroom fit how you teach.</h1><p>You can change these settings anytime.</p></div><section className="cf-onboard-card"><label>Your name<input value={name} onChange={e=>setName(e.target.value)}/></label><div className="cf-field"><b>I&apos;m using ClassFlow as a</b><div className="cf-role compact"><button className={role==="teacher"?"active":""} onClick={()=>setRole("teacher")}><GraduationCap size={19}/><b>Teacher</b></button><button className={role==="student"?"active":""} onClick={()=>setRole("student")}><Users size={19}/><b>Student</b></button></div></div>{role==="teacher"&&<div className="cf-field"><b>My usual live class size</b><span>Choose how many students you normally teach. You can override this for every class.</span><div className="cf-capacity">{[1,2,3,4,5].map(n=><button onClick={()=>setSize(n)} className={size===n?"active":""} key={n}>{size===n&&<Check size={14}/>}<strong>{n}</strong><span>{n===1?"student":"students"}</span></button>)}</div></div>}<button className="cf-primary" onClick={finish} disabled={busy}>{busy?"Saving...":<>Enter ClassFlow <ArrowRight size={17}/></>}</button></section></main></div>
+}
